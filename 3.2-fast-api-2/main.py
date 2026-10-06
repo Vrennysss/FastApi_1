@@ -83,7 +83,10 @@ def create_user(data: UserIn):
 
 
 @app.get("/user")
-def get_all_users():
+def get_all_users(request: Request):
+    me = kto_zapros(request)
+    if me is None:
+        raise HTTPException(status_code=403, detail="нет прав")
     return users
 
 
