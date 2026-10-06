@@ -5,9 +5,9 @@ import uvicorn
 
 app = FastAPI()
 
-# тут храним все обьявления, пока без базы данных, потом переделаю (НЕТ)
+
 объявления = []
-id_shnik = 1  # счетчик для id, не придумал по другому
+id_shnik = 1
 
 
 class Obj(BaseModel):
@@ -22,10 +22,10 @@ def sozdat_obyavlenie(obj: Obj):
     global id_shnik
     d = obj.dict()
     d["id"] = id_shnik
-    d['date_sozdania'] = str(datetime.now())  # дата создания автоматом
+    d['date_sozdania'] = str(datetime.now())
     id_shnik = id_shnik + 1
     объявления.append(d)
-    print("создали обьявление -> ", d)  # дебаг, забыл убрать
+    print("создали обьявление -> ", d)
     return d
 
 
@@ -58,12 +58,11 @@ def delete_obyavlenie(obj_id: int):
     return {"error": "нет такого обьявления("}
 
 
-# поиск по полям через query_string, типа GET /advertisement?avtor=Vasya
 @app.get("/advertisement")
 def search_obyavlenie(request: Request):
     params = dict(request.query_params)
     if len(params) == 0:
-        return объявления  # если без параметров то отдаем все, пускай так
+        return объявления
 
     res = []
     for i in объявления:
