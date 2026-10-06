@@ -6,10 +6,6 @@ import uuid
 
 app = FastAPI()
 
-# авторизация тут самая простая, без jwt и прочего, просто токен в словаре
-# чтобы проверить - логинишься на /login, берешь token из ответа
-# и дальше суешь его в заголовок "token" на все запросы где надо
-
 # =========== ОБЪЯВЛЕНИЯ ===========
 объявления = []
 id_shnik = 1
@@ -25,15 +21,14 @@ class Obj(BaseModel):
 users = []
 id_shnik_user = 1
 
-# тут лежат токены, ключ - сам токен, значение - чей он и когда сгорит
+
 tokens = {}
 
 
 class UserIn(BaseModel):
     login: str
     parol: str
-    group: str = "user"  # по идее тут должно быть user или admin, но я не проверяю, не до этого
-
+    group: str = "user" 
 
 class LoginIn(BaseModel):
     login: str
@@ -41,7 +36,6 @@ class LoginIn(BaseModel):
 
 
 def kto_zapros(request: Request):
-    # достаем юзера по токену из хедера, если токена нет или он протух - просто None (анонимус)
     token = request.headers.get("token")
     if not token:
         return None
@@ -49,7 +43,7 @@ def kto_zapros(request: Request):
     if info is None:
         return None
     if datetime.now() > info["expires"]:
-        del tokens[token]  # протух, удаляем чтоб не копилось мусора
+        del tokens[token]
         return None
     for u in users:
         if u["id"] == info["user_id"]:
